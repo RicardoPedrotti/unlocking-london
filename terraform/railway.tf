@@ -110,6 +110,12 @@ resource "railway_variable_collection" "directus" {
     { name = "KEY", value = random_password.directus_key.result },
     { name = "SECRET", value = random_password.directus_secret.result },
 
+    # Railway injects its own PORT (defaults to 8080) and private networking is
+    # IPv6-only. Pin PORT to 8055 so the BFF's directus.railway.internal:8055
+    # link is correct, and bind :: so service-to-service traffic resolves.
+    { name = "PORT", value = "8055" },
+    { name = "HOST", value = "::" },
+
     # Shared Postgres over the private network (plaintext internal link → no SSL).
     { name = "DB_CLIENT", value = "pg" },
     { name = "DB_CONNECTION_STRING", value = local.pg_internal_url },

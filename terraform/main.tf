@@ -1,6 +1,28 @@
 terraform {
   required_version = ">= 1.5"
 
+  # Remote state in a PRIVATE R2 bucket (S3-compatible). Holds the prod DB
+  # password + Directus secrets, so it must never be the public assets bucket.
+  # Bucket created out-of-band (not TF-managed) to avoid a circular dependency.
+  # Creds come from AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY env (the R2 keypair);
+  # never hardcode them here. R2 needs the skip_* flags + path style; use_lockfile
+  # gives S3-native locking via R2 conditional writes.
+  backend "s3" {
+    bucket = "unlockinglondon-tfstate"
+    key    = "unlocking-london/terraform.tfstate"
+    region = "auto"
+    endpoints = {
+      s3 = "https://6e0f6a280d46feceb7fc97f6db1a18aa.r2.cloudflarestorage.com"
+    }
+    use_path_style              = true
+    use_lockfile                = true
+    skip_credentials_validation = true
+    skip_region_validation      = true
+    skip_requesting_account_id  = true
+    skip_metadata_api_check     = true
+    skip_s3_checksum            = true
+  }
+
   required_providers {
     cloudflare = {
       source  = "cloudflare/cloudflare"

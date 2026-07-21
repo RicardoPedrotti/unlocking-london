@@ -53,8 +53,16 @@ to clients directly.
 | Postgres password | inlined dev value | `random_password` in Terraform state + Railway vars |
 | R2 S3 creds | n/a (local file storage) | `backend_env` map in `terraform.tfvars` (shared by api + directus) |
 | Terraform auth | n/a | `CLOUDFLARE_API_TOKEN` + `RAILWAY_TOKEN` (account token) in gitignored `terraform/.env` |
+| TF state backend creds | n/a | `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY` (= the R2 keypair) in gitignored `terraform/.env` |
 
-Terraform state is local and gitignored (`terraform/*.tfstate`) - it holds the DB password.
+Terraform state lives in a private R2 bucket `unlockinglondon-tfstate` (S3 backend
+in `main.tf`, key `unlocking-london/terraform.tfstate`, `use_lockfile` locking). It
+holds the DB password + Directus secrets, so the bucket is private and separate
+from the public assets bucket. The bucket was created out-of-band (not TF-managed)
+to avoid a circular dependency. Backend creds come from `AWS_*` env in
+`terraform/.env`; run `set -a; source .env; set +a` before any terraform command.
+The stale `terraform/*.tfstate` local files are gitignored backups from before the
+migration.
 
 ## Data flow notes
 
@@ -78,6 +86,7 @@ Terraform state is local and gitignored (`terraform/*.tfstate`) - it holds the D
 ## Known quirks
 
 - Railway community provider volume race on first `postgres` create: apply may fail with "inconsistent result" and taint the service - the volume IS created. `terraform untaint` and re-apply; do NOT let a tainted plan destroy the service (the volume holds the DB).
+- Directus private-network reachability: Railway injects its own `PORT` (defaults to 8080) and private networking is IPv6-only. The BFF calls `directus.railway.internal:8055`, so the `directus` service pins `PORT=8055` and `HOST=::` (in `terraform/railway.tf`). Without both, the BFF gets `fetch failed` on every Directus call and routes 500.
 - `expo-maps` is alpha (dev-build only, iOS 18+). Isolated behind `mobile/src/map/MapView.tsx`.
 
 ## Update checklist (per change)
