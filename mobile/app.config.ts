@@ -7,6 +7,7 @@ import type { ExpoConfig } from 'expo/config';
 const config: ExpoConfig = {
   name: 'Unlocking London',
   slug: 'unlocking-london',
+  owner: 'rpedrotti',
   scheme: 'unlockinglondon',
   version: '0.1.0',
   orientation: 'portrait',
@@ -53,6 +54,7 @@ const config: ExpoConfig = {
   experiments: { typedRoutes: true },
   extra: {
     apiUrl: process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3000',
+    eas: { projectId: '86ecaf7b-7577-4fed-8864-14f9337bd227' },
   },
 };
 
