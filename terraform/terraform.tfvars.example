@@ -1,0 +1,20 @@
+# Copy to terraform.tfvars (gitignored) and fill in.
+cloudflare_account_id = ""
+
+# Directus admin (also the BFF login). Use a strong password; rotate it in the
+# Directus UI after first login (env stays as the bootstrap).
+directus_admin_email    = ""
+directus_admin_password = ""
+
+# R2 creds are consumed by BOTH the api service and Directus (its asset storage).
+backend_env = {
+  R2_ACCOUNT_ID        = ""
+  R2_ACCESS_KEY_ID     = ""
+  R2_SECRET_ACCESS_KEY = ""
+  R2_BUCKET            = "unlockinglondon-assets"
+  # Apple sign-in (add when the flow ships):
+  # APPLE_CLIENT_ID     = ""
+  # APPLE_CLIENT_SECRET = ""
+  # APPLE_TEAM_ID       = ""
+  # APPLE_KEY_ID        = ""
+}

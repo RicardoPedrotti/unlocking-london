@@ -1,0 +1,57 @@
+# Local dev stack for Unlocking London: Postgres + Directus (the CMS / data API).
+# The backend (NestJS BFF) and mobile app run outside compose via `npm run`.
+# Dev values are inlined (safe for local only); production secrets are provisioned
+# by Terraform (see terraform/). Directus schema + seed: `cd tools/directus && npm run setup`.
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: directus
+      POSTGRES_PASSWORD: directus-dev-pw
+      POSTGRES_DB: unlocking_london
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U directus -d unlocking_london"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Directus - headless CMS and the app's data API (the BFF proxies it).
+  # Admin: http://localhost:8055  (admin@unlockinglondon.com / admin-dev-pw)
+  # Uses local file storage for dev; prod uploads go to R2 (see terraform/).
+  directus:
+    image: directus/directus:11
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8055:8055"
+    volumes:
+      - directus_uploads:/directus/uploads
+      - directus_extensions:/directus/extensions
+    environment:
+      KEY: local-dev-key
+      SECRET: local-dev-secret
+      PUBLIC_URL: http://localhost:8055
+      ADMIN_EMAIL: admin@unlockinglondon.com
+      ADMIN_PASSWORD: admin-dev-pw
+      DB_CLIENT: pg
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_DATABASE: unlocking_london
+      DB_USER: directus
+      DB_PASSWORD: directus-dev-pw
+      STORAGE_LOCATIONS: local
+      # Let the backend + Expo app reach Directus during dev.
+      CORS_ENABLED: "true"
+      CORS_ORIGIN: "true"
+
+volumes:
+  pgdata:
+  directus_uploads:
+  directus_extensions:

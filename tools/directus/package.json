@@ -1,0 +1,15 @@
+{
+  "name": "unlocking-london-directus-tools",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Directus schema bootstrap + seed for Unlocking London. Directus config lives in its DB (not Terraform), so these scripts are its IaC.",
+  "scripts": {
+    "bootstrap": "node schema.mjs",
+    "seed": "node seed.mjs",
+    "setup": "npm run bootstrap && npm run seed"
+  },
+  "dependencies": {
+    "@directus/sdk": "^19"
+  }
+}

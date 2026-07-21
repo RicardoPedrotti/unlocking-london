@@ -1,0 +1,100 @@
+{
+  "_comment": "Canonical seed data for Unlocking London. Single source of truth consumed by tools/directus/seed.mjs. Edit here, then re-run `npm run seed` in tools/directus.",
+  "categories": [
+    { "name": "Restaurant", "slug": "restaurant", "pin_icon": "fork.knife", "pin_color": "#B4471F" },
+    { "name": "Café", "slug": "cafe", "pin_icon": "cup.and.saucer.fill", "pin_color": "#C9772F" },
+    { "name": "Brunch", "slug": "brunch", "pin_icon": "sun.max.fill", "pin_color": "#E0A458" },
+    { "name": "Activity", "slug": "activity", "pin_icon": "star.fill", "pin_color": "#9C6B3F" }
+  ],
+  "tags": [
+    "iconic", "natural-wine", "no-reservations", "small-plates", "outdoor-seating", "vegetarian-friendly", "garden", "architecture"
+  ],
+  "occasions": ["take-your-parents", "date-night", "solo-lunch", "weekend-treat"],
+  "images": {
+    "food": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1200&q=80",
+    "dinner": "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=1200&q=80",
+    "brunch": "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?auto=format&fit=crop&w=1200&q=80",
+    "coffee": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1200&q=80",
+    "architecture": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80",
+    "garden": "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1200&q=80"
+  },
+  "places": [
+    {
+      "slug": "st-john-smithfield", "title": "St. JOHN", "category": "restaurant", "area": "Smithfield",
+      "address": "26 St John Street, London EC1M 4AY", "geo": { "lat": 51.52012, "lng": -0.10175 },
+      "price_band": "£££", "booking_url": "https://stjohnrestaurant.com", "image": "food",
+      "tags": ["iconic", "small-plates"], "occasions": ["take-your-parents", "date-night"],
+      "review": {
+        "verdict": "Nose-to-tail cooking that defined modern British dining.",
+        "pull_quote": "Bone marrow and a glass of claret - this is London on a plate.",
+        "body": "Fergus Henderson's Smithfield institution still sets the standard for honest, seasonal British food. The whitewashed dining room is pure calm; the roast bone marrow with parsley salad is non-negotiable. Come hungry, bring your parents, order the Eccles cake and Lancashire cheese to finish."
+      }
+    },
+    {
+      "slug": "lyles-shoreditch", "title": "Lyle's", "category": "restaurant", "area": "Shoreditch",
+      "address": "Tea Building, 56 Shoreditch High Street, London E1 6JJ", "geo": { "lat": 51.52405, "lng": -0.07762 },
+      "price_band": "£££", "booking_url": "https://lyleslondon.com", "image": "dinner",
+      "tags": ["natural-wine", "small-plates"], "occasions": ["date-night", "weekend-treat"],
+      "review": {
+        "verdict": "Pared-back, ingredient-led cooking in a bright Shoreditch room.",
+        "pull_quote": "A daily-changing menu that trusts the produce completely.",
+        "body": "James Lowe's Michelin-starred canteen keeps things deliberately spare - white walls, a short set menu at dinner, and some of the best sourcing in the city. The natural wine list is a joy. Lunch is a la carte and a smart solo option; dinner is the full set-menu experience."
+      }
+    },
+    {
+      "slug": "dishoom-shoreditch", "title": "Dishoom Shoreditch", "category": "brunch", "area": "Shoreditch",
+      "address": "7 Boundary Street, London E2 7JE", "geo": { "lat": 51.52450, "lng": -0.07590 },
+      "price_band": "££", "booking_url": "https://www.dishoom.com/shoreditch", "image": "brunch",
+      "tags": ["iconic", "no-reservations", "vegetarian-friendly"], "occasions": ["weekend-treat", "take-your-parents"],
+      "review": {
+        "verdict": "Bombay-cafe brunch worth every minute of the queue.",
+        "pull_quote": "The bacon naan roll is a rite of passage.",
+        "body": "The Shoreditch original leans into its Irani-cafe theme with a leafy courtyard and a first-floor bar. Brunch is the move: bacon naan rolls, akuri on toast, house chai. No bookings for small groups at peak, so arrive early or settle in with a chai while you wait."
+      }
+    },
+    {
+      "slug": "monmouth-borough", "title": "Monmouth Coffee", "category": "cafe", "area": "Borough",
+      "address": "2 Park Street, London SE1 9AB", "geo": { "lat": 51.50543, "lng": -0.09088 },
+      "price_band": "£", "booking_url": "https://www.monmouthcoffee.co.uk", "image": "coffee",
+      "tags": ["iconic", "no-reservations"], "occasions": ["solo-lunch"],
+      "review": {
+        "verdict": "The Borough Market coffee counter that trained a generation.",
+        "pull_quote": "A flat white and a slab of toast with jam - simple, perfect.",
+        "body": "Right on the edge of Borough Market, Monmouth is standing-room, single-origin, and gloriously no-frills. Grab a filter, a pastry, and lean on a barrel outside. It is a solo-lunch classic and the ideal caffeine stop before wandering the market stalls."
+      }
+    },
+    {
+      "slug": "barbican-centre", "title": "The Barbican Centre", "category": "activity", "area": "Barbican",
+      "address": "Silk Street, London EC2Y 8DS", "geo": { "lat": 51.51997, "lng": -0.09366 },
+      "price_band": "££", "booking_url": "https://www.barbican.org.uk", "image": "architecture",
+      "tags": ["iconic", "architecture"], "occasions": ["date-night", "take-your-parents"],
+      "review": {
+        "verdict": "Brutalist icon packing cinema, art, gigs and a jungle-like conservatory.",
+        "pull_quote": "The tropical conservatory alone justifies the trip.",
+        "body": "Europe's largest multi-arts venue is a maze worth getting lost in. Catch a film or exhibition, then find the hidden Conservatory - a humid, plant-stuffed glasshouse tucked above the theatre. The concrete lakeside terrace makes a surprisingly romantic pre-show drink."
+      }
+    },
+    {
+      "slug": "sketch-mayfair", "title": "Sketch", "category": "cafe", "area": "Mayfair",
+      "address": "9 Conduit Street, London W1S 2XG", "geo": { "lat": 51.51270, "lng": -0.14150 },
+      "price_band": "£££", "booking_url": "https://sketch.london", "image": "coffee",
+      "tags": ["iconic", "architecture"], "occasions": ["date-night", "take-your-parents"],
+      "review": {
+        "verdict": "Afternoon tea in the pinkest room in London.",
+        "pull_quote": "The egg-shaped loos are worth the booking on their own.",
+        "body": "The Gallery's blush-pink David Shrigley makeover is peak Instagram, but the afternoon tea holds up: tiered stands, immaculate patisserie, theatrical service. Book well ahead. Even a pot of tea and a pastry feels like an event here - proper treat territory."
+      }
+    },
+    {
+      "slug": "kew-gardens", "title": "Kew Gardens", "category": "activity", "area": "Kew, Richmond",
+      "address": "Royal Botanic Gardens, Kew, Richmond TW9 3AE", "geo": { "lat": 51.47872, "lng": -0.29566 },
+      "price_band": "££", "booking_url": "https://www.kew.org", "image": "garden",
+      "tags": ["garden", "outdoor-seating"], "occasions": ["take-your-parents", "weekend-treat"],
+      "review": {
+        "verdict": "300 acres of glasshouses, treetop walkways and world-class botany.",
+        "pull_quote": "The Palm House on a cold morning is pure escapism.",
+        "body": "A UNESCO World Heritage garden that rewards a whole day. Do the Victorian Palm House, the Temperate House, and the Treetop Walkway, then picnic on the lawns. Easy on the District line, brilliant with visiting parents, and a proper reset from central London."
+      }
+    }
+  ]
+}

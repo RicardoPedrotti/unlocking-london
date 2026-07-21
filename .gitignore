@@ -1,0 +1,17 @@
+# Dependencies (backend/ and mobile/ have their own gitignores; this catches the rest e.g. tools/)
+node_modules/
+
+# Env / secrets
+.env
+.env.local
+*.env
+!*.env.example
+
+# OS / editor junk
+.DS_Store
+*.log
+.idea/
+.vscode/
+
+# Build output
+dist/

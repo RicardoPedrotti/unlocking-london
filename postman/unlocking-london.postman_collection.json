@@ -1,0 +1,393 @@
+{
+  "info": {
+    "name": "Unlocking London - Backend API",
+    "description": "Local dev collection for the Unlocking London NestJS BFF gateway. All routes are under the global prefix /v1. Set `baseUrl` to your backend (default http://localhost:3000). Run Auth > POST /v1/auth/login once to populate the accessToken/refreshToken collection variables - /me/* calls then send Authorization: Bearer <accessToken> automatically. Public content (/places, /categories, /occasions, /assets) needs no Bearer.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "unlocking-london-local-dev"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "placeId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "GET /v1/health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "health"
+              ]
+            },
+            "description": "Liveness probe - NOTE: no health endpoint exists in the backend yet (no health controller registered in app.module.ts). This request will 404 until one is added. Kept here as a placeholder."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "POST /v1/auth/login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const data = pm.response.json();",
+                  "if (data && data.access_token) { pm.collectionVariables.set('accessToken', data.access_token); }",
+                  "if (data && data.refresh_token) { pm.collectionVariables.set('refreshToken', data.refresh_token); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"you@example.com\",\n  \"password\": \"your-password\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Proxies Directus /auth/login. Returns { access_token, refresh_token, expires }. Test script saves access_token/refresh_token into the accessToken/refreshToken collection variables so the whole collection is authenticated after one login."
+          }
+        },
+        {
+          "name": "POST /v1/auth/refresh",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const data = pm.response.json();",
+                  "if (data && data.access_token) { pm.collectionVariables.set('accessToken', data.access_token); }",
+                  "if (data && data.refresh_token) { pm.collectionVariables.set('refreshToken', data.refresh_token); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh_token\": \"{{refreshToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/auth/refresh",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "auth",
+                "refresh"
+              ]
+            },
+            "description": "Exchanges a refresh_token for a fresh { access_token, refresh_token, expires }. Test script updates the accessToken/refreshToken variables."
+          }
+        },
+        {
+          "name": "POST /v1/auth/logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh_token\": \"{{refreshToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "auth",
+                "logout"
+              ]
+            },
+            "description": "Invalidates the given refresh_token in Directus. Returns 204 No Content."
+          }
+        },
+        {
+          "name": "POST /v1/auth/apple",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identityToken\": \"<apple-identity-jwt>\",\n  \"fullName\": \"Ada Lovelace\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/auth/apple",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "auth",
+                "apple"
+              ]
+            },
+            "description": "Sign in with Apple. Returns 501 Not Implemented until an Apple provider/flow is provisioned in Directus. Shape is fixed ({ access_token, refresh_token, expires }) so the app wires in once. fullName is optional (Apple only sends it on first login)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Places",
+      "item": [
+        {
+          "name": "GET /v1/places",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/places",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "places"
+              ]
+            },
+            "description": "Lists published places, normalized (M2M junctions flattened). Returns Place[]. Public - no Bearer needed."
+          }
+        },
+        {
+          "name": "GET /v1/places/:id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/places/{{placeId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "places",
+                "{{placeId}}"
+              ]
+            },
+            "description": "Returns one normalized Place by id. 404 if not found or unpublished. Set the placeId collection variable first. Public - no Bearer needed."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Taxonomy",
+      "item": [
+        {
+          "name": "GET /v1/categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "categories"
+              ]
+            },
+            "description": "Returns Category[] reference data (id, name, slug, pin_icon, pin_color). Public - no Bearer needed."
+          }
+        },
+        {
+          "name": "GET /v1/occasions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/occasions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "occasions"
+              ]
+            },
+            "description": "Returns Occasion[] reference data (id, name, slug). Public - no Bearer needed."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Me",
+      "item": [
+        {
+          "name": "GET /v1/me",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "me"
+              ]
+            },
+            "description": "Returns the current user { id, email, first_name }. Requires Bearer (inherits collection auth using accessToken)."
+          }
+        },
+        {
+          "name": "GET /v1/me/taste-profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/me/taste-profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "me",
+                "taste-profile"
+              ]
+            },
+            "description": "Returns the current user's TasteProfile or null. Requires Bearer (inherits collection auth using accessToken)."
+          }
+        },
+        {
+          "name": "PUT /v1/me/taste-profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"onboarding\": {\n    \"cuisines\": [\"italian\", \"japanese\"],\n    \"price_bands\": [\"$$\", \"$$$\"],\n    \"vibes\": [\"cosy\", \"date-night\"],\n    \"occasions\": [\"dinner\", \"drinks\"]\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/me/taste-profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "me",
+                "taste-profile"
+              ]
+            },
+            "description": "Create-or-update the current user's TasteProfile (one-to-one per user). Returns the saved TasteProfile. Requires Bearer (inherits collection auth using accessToken)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Assets",
+      "item": [
+        {
+          "name": "GET /v1/assets/:id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/assets/{{placeId}}?width=1200&quality=80",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "assets",
+                "{{placeId}}"
+              ],
+              "query": [
+                {
+                  "key": "width",
+                  "value": "1200"
+                },
+                {
+                  "key": "quality",
+                  "value": "80"
+                }
+              ]
+            },
+            "description": "Streams an image from Directus /assets/:id with transform params (width, height, quality, fit) passed through. NOTE: :id is a Directus file id (e.g. a place hero_image), not a place id - the placeId variable is only reused here as a stand-in; substitute a real file id. Public - no Bearer needed."
+          }
+        }
+      ]
+    }
+  ]
+}
