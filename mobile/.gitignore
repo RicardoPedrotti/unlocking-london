@@ -18,6 +18,8 @@ fastlane/report.xml
 fastlane/README.md
 *.ipa
 *.mobileprovision
+*.dSYM.zip
+*.app.dSYM.zip
 
 # Keep the vendored font stand-ins (swap for licensed face later)
 !assets/fonts/*.ttf
