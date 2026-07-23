@@ -9,7 +9,7 @@ const config: ExpoConfig = {
   slug: 'unlocking-london',
   owner: 'rpedrotti',
   scheme: 'unlockinglondon',
-  version: '0.1.0',
+  version: '0.2.0',
   orientation: 'portrait',
   userInterfaceStyle: 'automatic', // honour light/dark
   icon: './assets/icon.png',
