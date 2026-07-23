@@ -1,0 +1,3 @@
+app_identifier("com.unlockinglondon.app") # bundle id
+team_id("BPBKMD43R4")                      # Apple Developer team
+itc_team_id("129017063")                   # App Store Connect provider id

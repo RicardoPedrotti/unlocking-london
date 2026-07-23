@@ -11,6 +11,14 @@ android/
 .env
 .env.local
 
+# fastlane
+fastlane/.env.default
+fastlane/AuthKey.p8
+fastlane/report.xml
+fastlane/README.md
+*.ipa
+*.mobileprovision
+
 # Keep the vendored font stand-ins (swap for licensed face later)
 !assets/fonts/*.ttf
 

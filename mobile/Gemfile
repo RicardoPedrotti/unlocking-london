@@ -1,0 +1,4 @@
+source "https://rubygems.org"
+
+gem "fastlane"
+gem "cocoapods", ">= 1.13" # 1.13+ knows the visionos podspec DSL; system gem 1.10 doesn't
