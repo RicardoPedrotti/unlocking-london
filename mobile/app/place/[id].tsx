@@ -1,8 +1,9 @@
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import { SymbolView } from 'expo-symbols';
-import { Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Linking, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '../../src/components/Button';
 import { Chip } from '../../src/components/Chip';
@@ -12,11 +13,11 @@ import { assetUrl } from '../../src/lib/api';
 import { usePlace } from '../../src/lib/queries';
 import { radius, screenMargin, space, useTheme } from '../../src/theme';
 
-const HERO_H = 460;
-
 export default function PlaceDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
+  const { width, height } = useWindowDimensions();
+  const heroH = Math.round(height * 0.56); // relative hero, scales per device
   const router = useRouter();
   const { c } = useTheme();
   const { data: place, isLoading } = usePlace(id);
@@ -34,11 +35,20 @@ export default function PlaceDetail() {
   const category = typeof place.category === 'object' ? place.category?.name : undefined;
   const review = (place.reviews ?? []).find((r) => r.status === 'published') ?? place.reviews?.[0];
 
+  // Script quote: size scales with device width, tapers for long quotes so a
+  // wordy pull-quote can't blow out the column. Clamped to a legible range.
+  const len = review?.pull_quote?.length ?? 0;
+  const taper = len > 140 ? 0.72 : len > 90 ? 0.85 : 1;
+  const quoteSize = Math.max(30, Math.min(40, Math.round(width * 0.078 * taper)));
+
   return (
     <View style={[styles.fill, { backgroundColor: c.paper }]}>
+      {/* Light glyphs read over the dark hero. ponytail: fixed style; add
+          scroll-offset tracking only if the top ever shows paper for long. */}
+      <StatusBar style="light" />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: insets.bottom + 120 }}>
         {/* Full-bleed hero */}
-        <View style={{ height: HERO_H }}>
+        <View style={{ height: heroH }}>
           <Image
             source={{ uri: assetUrl(place.hero_image, { width: 1400 }) }}
             style={StyleSheet.absoluteFill}
@@ -67,10 +77,12 @@ export default function PlaceDetail() {
 
           {review?.pull_quote ? (
             <View style={[styles.quote, { borderLeftColor: c.accent }]}>
-              <Text variant="pullQuote">“{review.pull_quote}”</Text>
+              <Text variant="signature" style={{ fontSize: quoteSize, lineHeight: Math.round(quoteSize * 1) }}>
+                “{review.pull_quote}”
+              </Text>
               {review.author ? (
-                <Text variant="caption" muted style={{ marginTop: space.sm }}>
-                  — {review.author}
+                <Text variant="signature" accent style={{ marginTop: space.sm, fontSize: 20 }}>
+                  {review.author}
                 </Text>
               ) : null}
             </View>

@@ -1,4 +1,5 @@
 import { NativeTabs } from 'expo-router/unstable-native-tabs';
+import { colors } from '../../src/theme';
 
 /**
  * Liquid Glass floating tab bar via expo-router native tabs (system glass).
@@ -7,7 +8,8 @@ import { NativeTabs } from 'expo-router/unstable-native-tabs';
  */
 export default function TabsLayout() {
   return (
-    <NativeTabs>
+    // Brand rose selection tint (scheme-invariant), not system blue.
+    <NativeTabs tintColor={colors.light.accent}>
       <NativeTabs.Trigger name="index">
         <NativeTabs.Trigger.Icon sf="map.fill" />
         <NativeTabs.Trigger.Label>Map</NativeTabs.Trigger.Label>

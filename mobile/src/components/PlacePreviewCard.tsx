@@ -4,26 +4,23 @@ import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
 import { assetUrl } from '../lib/api';
 import type { Place } from '../lib/types';
 import { Glass } from './Glass';
-import { radius, space, useTheme } from '../theme';
+import { radius, space } from '../theme';
 import { Text } from './Text';
 
 /**
  * Glass preview card that rises when a map pin is tapped: hero thumb, serif
- * name, price/area, quick actions. Tapping it opens the full Place detail.
+ * name, area, address and price. Tapping it opens the full Place detail.
  */
 export function PlacePreviewCard({
   place,
   onOpen,
-  onRoute,
 }: {
   place: Place;
   onOpen: () => void;
-  onRoute?: () => void;
 }) {
-  const { c } = useTheme();
   const category = typeof place.category === 'object' ? place.category?.name : undefined;
   return (
-    <Animated.View entering={FadeInDown.springify().damping(18)} exiting={FadeOutDown}>
+    <Animated.View entering={FadeInDown.springify().damping(40)} exiting={FadeOutDown}>
       <Glass style={styles.wrap} radius={radius.xl}>
         <Pressable onPress={onOpen} style={styles.row}>
           <Image
@@ -39,9 +36,16 @@ export function PlacePreviewCard({
             <Text variant="headline" numberOfLines={1} style={{ marginVertical: 2 }}>
               {place.title}
             </Text>
-            <Text variant="label" muted>
-              {place.price_band ?? ''}
-            </Text>
+            {place.address ? (
+              <Text variant="caption" muted numberOfLines={1}>
+                {place.address}
+              </Text>
+            ) : null}
+            {place.price_band ? (
+              <Text variant="label" muted style={{ marginTop: 2 }}>
+                {place.price_band}
+              </Text>
+            ) : null}
           </View>
         </Pressable>
       </Glass>

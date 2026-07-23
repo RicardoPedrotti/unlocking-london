@@ -37,6 +37,7 @@ cd ../mobile && cp .env.example .env && npm install && npx expo prebuild -p ios 
 - Directus schema is owned by `tools/directus/schema.mjs` (idempotent SDK bootstrap), NOT by SQL and NOT by the backend. Seed data is `data/catalog.json`, applied by `tools/directus/seed.mjs`.
 - Backend is a thin gateway: no DB of its own, no ORM. It reads Directus with a cached admin session and forwards the user's Bearer for `/me/*`. Response envelopes from Directus (`{data}`) are unwrapped before returning.
 - Design tokens live only in `mobile/src/theme/tokens.ts`. Never hardcode colour/type/spacing.
+- Layout is relative, never super-static. Content dimensions (hero/card heights, carousel widths, full-bleed images) scale with the device via `useWindowDimensions()` percentages, not fixed px. Floating overlays use `position: absolute` anchored to safe-area insets, never raw pixel offsets. KEEP fixed: touch targets (44/48pt, iOS HIG minimums), thumbnails, radii, and the token scale - scaling those breaks ergonomics.
 - Deferred features (favourites, lists, ratings, Passport, Plans, swipe) are left as commented extension points. Search `EXTENSION POINT` and `ponytail:`.
 - Writing style: plain hyphens only, never em/en-dashes. Never run `git commit` - stage and ask.
 - Secrets: local dev values are inlined in `docker-compose.yml`. Prod secrets live in gitignored `terraform/terraform.tfvars` and are pushed to Railway via `terraform apply` - never hand-edit the Railway dashboard.

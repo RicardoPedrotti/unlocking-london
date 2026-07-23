@@ -20,19 +20,22 @@ export interface Marker {
 export interface MapHandle {
   /** Smooth fly-to a coordinate (Flighty signature camera move). */
   flyTo: (lat: number, lng: number, opts?: { zoom?: number; pitch?: number }) => void;
+  /** Clear MapKit's native marker selection (drops the highlighted pin state). */
+  deselect: () => void;
 }
 
 interface Props {
   markers: Marker[];
   center: { lat: number; lng: number };
   onMarkerPress?: (place: Place) => void;
+  onMapPress?: () => void; // tap on empty map (not a marker/POI) — used to deselect
   onCameraChange?: (region: { lat: number; lng: number; zoom: number }) => void;
 }
 
 const LONDON = { lat: 51.5074, lng: -0.1278 };
 
 export const MapView = forwardRef<MapHandle, Props>(function MapView(
-  { markers, center, onMarkerPress, onCameraChange },
+  { markers, center, onMarkerPress, onMapPress, onCameraChange },
   ref,
 ) {
   const mapRef = useRef<AppleMaps.MapView>(null);
@@ -46,6 +49,7 @@ export const MapView = forwardRef<MapHandle, Props>(function MapView(
         // pitch drives the subtle 3D tilt; camera glides (animated by MapKit).
       });
     },
+    deselect: () => mapRef.current?.selectMarker(undefined, { moveCamera: false }),
   }));
 
   return (
@@ -60,13 +64,16 @@ export const MapView = forwardRef<MapHandle, Props>(function MapView(
         // Muted, clean base map + realistic 3D elevation.
         mapType: AppleMaps.MapType.STANDARD,
         isMyLocationEnabled: true,
-        selectionEnabled: true,
+        selectionEnabled: false,
+        // Hide all of Apple's built-in POIs so only our curated pins are tappable.
+        pointsOfInterest: { including: [] },
         // colorScheme follows system; imagery stays the hero.
       }}
       uiSettings={{
         compassEnabled: false,
         myLocationButtonEnabled: false, // we ship a custom glass locate-me control
         scaleBarEnabled: false,
+        togglePitchEnabled: false, // hide Apple's "3D" button; it collides with our filters
       }}
       markers={markers.map((m) => ({
         id: String(m.id), // native marker id must be a string; place.id is numeric
@@ -79,6 +86,7 @@ export const MapView = forwardRef<MapHandle, Props>(function MapView(
         const m = markers.find((x) => String(x.id) === e.id);
         if (m) onMarkerPress?.(m.place);
       }}
+      onMapClick={() => onMapPress?.()}
       onCameraMove={(e: any) => {
         const co = e?.coordinates ?? e?.cameraPosition?.coordinates;
         if (co) onCameraChange?.({ lat: co.latitude, lng: co.longitude, zoom: e?.zoom ?? 13 });

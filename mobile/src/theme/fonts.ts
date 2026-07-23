@@ -11,5 +11,7 @@ export function useEditorialFonts() {
     // ponytail: free stand-in for the licensed display face; swap files, keep keys.
     EditorialSerif: require('../../assets/fonts/PlayfairDisplay-Regular.ttf'),
     'EditorialSerif-Medium': require('../../assets/fonts/PlayfairDisplay-Medium.ttf'),
+    // Karumbi (SIL OFL 1.1) — handwritten script for personal-voice accents only.
+    Karumbi: require('../../assets/fonts/Karumbi-Regular.ttf'),
   });
 }

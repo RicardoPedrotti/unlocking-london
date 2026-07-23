@@ -6,7 +6,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Chip } from '../../src/components/Chip';
 import { Glass } from '../../src/components/Glass';
 import { PlacePreviewCard } from '../../src/components/PlacePreviewCard';
-import { Text } from '../../src/components/Text';
 import { useUserLocation } from '../../src/lib/location';
 import { useCategories, usePlaces } from '../../src/lib/queries';
 import type { Category, Place } from '../../src/lib/types';
@@ -28,6 +27,12 @@ export default function MapScreen() {
   const { data: categories = [] } = useCategories();
   const [activeCat, setActiveCat] = useState<string | null>(null);
   const [selected, setSelected] = useState<Place | null>(null);
+
+  // Drop both our card and MapKit's native pin highlight.
+  const clearSelection = () => {
+    setSelected(null);
+    mapRef.current?.deselect();
+  };
 
   const catById = useMemo(() => {
     const m = new Map<string, Category>();
@@ -63,9 +68,14 @@ export default function MapScreen() {
         markers={markers}
         center={userCoords}
         onMarkerPress={(place) => {
+          if (selected?.id === place.id) {
+            clearSelection(); // re-tap the active pin toggles the card off
+            return;
+          }
           setSelected(place);
           mapRef.current?.flyTo(place.geo.lat, place.geo.lng, { zoom: 16, pitch: 55 });
         }}
+        onMapPress={clearSelection}
       />
 
       {/* Floating glass category filters */}
@@ -87,33 +97,25 @@ export default function MapScreen() {
         </ScrollView>
       </View>
 
-      {/* Locate-me floating glass control */}
-      <Glass style={[styles.locate, { bottom: insets.bottom + 96 }]} radius={radius.pill}>
-        <Pressable
-          accessibilityLabel="Centre on my location"
-          onPress={() => mapRef.current?.flyTo(userCoords.lat, userCoords.lng, { zoom: 14 })}
-          style={styles.locateHit}
-        >
-          <SymbolView name="location.fill" size={20} tintColor={colors.light.accent} />
-        </Pressable>
-      </Glass>
-
-      {/* Glass preview card */}
-      {selected ? (
-        <View style={[styles.preview, { bottom: insets.bottom + 96 }]} pointerEvents="box-none">
-          <PlacePreviewCard
-            place={selected}
-            onOpen={() => router.push(`/place/${selected.id}`)}
-          />
+      {/* Locate-me floating glass control. Hidden while a preview card is up
+          so the two don't stack on the same bottom offset. */}
+      {selected ? null : (
+        <Glass style={[styles.locate, { bottom: insets.bottom + 96 }]} radius={radius.pill}>
           <Pressable
-            accessibilityLabel="Dismiss preview"
-            onPress={() => setSelected(null)}
-            style={styles.dismiss}
+            accessibilityLabel="Centre on my location"
+            onPress={() => mapRef.current?.flyTo(userCoords.lat, userCoords.lng, { zoom: 14 })}
+            style={styles.locateHit}
           >
-            <Text variant="caption" muted>
-              Close
-            </Text>
+            <SymbolView name="location.fill" size={20} tintColor={colors.light.accent} />
           </Pressable>
+        </Glass>
+      )}
+
+      {/* Bottom-docked glass preview. Dismiss by tapping the map or re-tapping
+          the pin (both route through clearSelection). */}
+      {selected ? (
+        <View style={[styles.preview, { bottom: insets.bottom + 56 }]} pointerEvents="box-none">
+          <PlacePreviewCard place={selected} onOpen={() => router.push(`/place/${selected.id}`)} />
         </View>
       ) : null}
     </View>
@@ -134,5 +136,4 @@ const styles = StyleSheet.create({
   },
   locateHit: { width: 48, height: 48, alignItems: 'center', justifyContent: 'center' },
   preview: { position: 'absolute', left: space.lg, right: space.lg },
-  dismiss: { alignSelf: 'center', paddingVertical: space.sm },
 });

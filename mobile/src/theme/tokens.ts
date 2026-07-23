@@ -94,6 +94,7 @@ export const fonts = {
   serif: 'EditorialSerif', // maps to loaded font family (see theme/fonts.ts)
   serifMedium: 'EditorialSerif-Medium',
   sans: 'System', // SF Pro on iOS
+  script: 'Karumbi', // handwritten accent — signatures / personal voice ONLY, never body
 } as const;
 
 // Type scale — large expressive serif vs small quiet sans.
@@ -102,6 +103,8 @@ export const type = {
   title: { fontFamily: fonts.serif, fontSize: 28, lineHeight: 32, letterSpacing: -0.3 },
   headline: { fontFamily: fonts.serifMedium, fontSize: 22, lineHeight: 26 },
   pullQuote: { fontFamily: fonts.serif, fontSize: 24, lineHeight: 32, letterSpacing: -0.2 },
+  // Handwritten script accent. Base size; override fontSize per call site as needed.
+  signature: { fontFamily: fonts.script, fontSize: 22, lineHeight: 28 },
   bodyLg: { fontFamily: fonts.sans, fontSize: 17, lineHeight: 26 },
   body: { fontFamily: fonts.sans, fontSize: 15, lineHeight: 22 },
   label: { fontFamily: fonts.sans, fontSize: 13, lineHeight: 16, fontWeight: '600' as const },

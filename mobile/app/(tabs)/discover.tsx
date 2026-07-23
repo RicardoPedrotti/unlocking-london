@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ImageCard } from '../../src/components/ImageCard';
 import { SectionHeader } from '../../src/components/SectionHeader';
@@ -17,9 +17,15 @@ const RAIL_OCCASION = 'take-your-parents';
 
 export default function DiscoverScreen() {
   const insets = useSafeAreaInsets();
+  const { width, height } = useWindowDimensions();
   const router = useRouter();
   const { c } = useTheme();
   const { data: places = [], isLoading } = usePlaces();
+
+  // Relative sizing so cards scale across iPhone SE -> Pro Max.
+  const heroH = Math.round(height * 0.58);
+  const railCardW = Math.round(width * 0.72); // leaves the next card peeking
+  const railCardH = Math.round(height * 0.44);
 
   const featured = places[0];
   const rail = useMemo(
@@ -35,15 +41,18 @@ export default function DiscoverScreen() {
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: c.paper }}
-      contentContainerStyle={{ paddingTop: insets.top + space.lg, paddingBottom: insets.bottom + 120 }}
+      contentContainerStyle={{ paddingTop: insets.top, paddingBottom: insets.bottom + 120 }}
       showsVerticalScrollIndicator={false}
     >
       <View style={styles.head}>
-        <Text variant="overline" accent>
+        <Text
+          variant="signature"
+          accent
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          style={{ fontSize: 60, lineHeight: 60, marginTop: space.xs }}
+        >
           Unlocking London
-        </Text>
-        <Text variant="display" style={{ marginTop: space.xs }}>
-          Discover
         </Text>
       </View>
 
@@ -56,7 +65,7 @@ export default function DiscoverScreen() {
       {featured ? (
         <View style={styles.pad}>
           <SectionHeader kicker="Featured this week" title="Our pick" />
-          <ImageCard place={featured} height={480} onPress={() => router.push(`/place/${featured.id}`)} />
+          <ImageCard place={featured} height={heroH} onPress={() => router.push(`/place/${featured.id}`)} />
         </View>
       ) : null}
 
@@ -71,8 +80,8 @@ export default function DiscoverScreen() {
             contentContainerStyle={{ paddingHorizontal: screenMargin, gap: space.lg }}
           >
             {rail.map((p: Place) => (
-              <View key={p.id} style={{ width: 280 }}>
-                <ImageCard place={p} height={360} onPress={() => router.push(`/place/${p.id}`)} />
+              <View key={p.id} style={{ width: railCardW }}>
+                <ImageCard place={p} height={railCardH} onPress={() => router.push(`/place/${p.id}`)} />
               </View>
             ))}
           </ScrollView>

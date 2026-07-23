@@ -53,6 +53,8 @@ export default function Auth() {
           placeholderTextColor={c.inkMuted}
           autoCapitalize="none"
           keyboardType="email-address"
+          textContentType="username"
+          autoComplete="email"
           value={email}
           onChangeText={setEmail}
           style={[styles.input, { borderColor: c.divider, color: c.ink, backgroundColor: c.card }]}
@@ -61,6 +63,8 @@ export default function Auth() {
           placeholder="Password"
           placeholderTextColor={c.inkMuted}
           secureTextEntry
+          textContentType="password"
+          autoComplete="current-password"
           value={password}
           onChangeText={setPassword}
           style={[styles.input, { borderColor: c.divider, color: c.ink, backgroundColor: c.card }]}
